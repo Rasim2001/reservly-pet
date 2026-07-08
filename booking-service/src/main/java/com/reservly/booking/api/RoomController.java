@@ -2,12 +2,17 @@ package com.reservly.booking.api;
 
 import com.reservly.booking.dto.CreateRoomRequest;
 import com.reservly.booking.dto.RoomResponse;
+import com.reservly.booking.dto.UpdateRoomRequest;
 import com.reservly.booking.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 
 @Slf4j
 @RestController
@@ -38,5 +43,29 @@ public class RoomController {
         log.info("Get by id={}", id);
 
         return response;
+    }
+
+    @GetMapping
+    public Page<RoomResponse> getList(@PageableDefault(size = 20) Pageable pageable) {
+        log.info("Get list");
+
+        return roomService.list(pageable);
+    }
+
+    @PutMapping("/{id}")
+    public RoomResponse updateRoom(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateRoomRequest roomRequest) {
+
+        log.info("Update room with id={}", id);
+
+        return roomService.updateRoom(id, roomRequest);
+    }
+
+    @DeleteMapping("/{id}")
+    public RoomResponse deleteRoom(@PathVariable Long id) {
+        log.info("delete room with id={}", id);
+
+        return roomService.deleteRoom(id);
     }
 }
