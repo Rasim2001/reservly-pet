@@ -28,6 +28,24 @@ public class GlobalExceptionHandler {
                 "Request conflicts with existing data (e.g. duplicate unique value)");
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ProblemDetail handleBadRequest(BadRequestException e) {
+
+        log.debug("BadRequest : {}", e.getMessage());
+
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+
+    @ExceptionHandler(ConflictException.class)
+    public ProblemDetail handleConflict(ConflictException e) {
+
+        log.debug("Conflict Exception : {}", e.getMessage());
+
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidation(MethodArgumentNotValidException e) {
         String detail =

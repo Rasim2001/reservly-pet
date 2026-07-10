@@ -1,8 +1,8 @@
-package com.reservly.booking.domain;
+package com.reservly.booking.domain.room;
 
-import com.reservly.booking.dto.CreateRoomRequest;
-import com.reservly.booking.dto.RoomResponse;
-import com.reservly.booking.dto.UpdateRoomRequest;
+import com.reservly.booking.dto.room.CreateRoomRequest;
+import com.reservly.booking.dto.room.RoomResponse;
+import com.reservly.booking.dto.room.UpdateRoomRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
@@ -11,7 +11,6 @@ import org.mapstruct.ReportingPolicy;
         componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RoomMapper {
     RoomEntity toEntity(CreateRoomRequest createRoomRequest);
-    RoomEntity toEntity(UpdateRoomRequest updateRoomRequest);
 
     RoomResponse toResponse(RoomEntity entity);
 }

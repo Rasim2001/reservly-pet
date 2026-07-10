@@ -1,11 +1,11 @@
 package com.reservly.booking.service;
 
-import com.reservly.booking.domain.RoomEntity;
-import com.reservly.booking.domain.RoomMapper;
-import com.reservly.booking.domain.RoomStatus;
-import com.reservly.booking.dto.CreateRoomRequest;
-import com.reservly.booking.dto.RoomResponse;
-import com.reservly.booking.dto.UpdateRoomRequest;
+import com.reservly.booking.domain.room.RoomEntity;
+import com.reservly.booking.domain.room.RoomMapper;
+import com.reservly.booking.domain.room.RoomStatus;
+import com.reservly.booking.dto.room.CreateRoomRequest;
+import com.reservly.booking.dto.room.RoomResponse;
+import com.reservly.booking.dto.room.UpdateRoomRequest;
 import com.reservly.booking.repository.RoomRepository;
 import com.reservly.common.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -50,12 +51,10 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponse deleteRoom(Long id) {
+    public void deleteRoom(Long id) {
         RoomEntity forDeleteEntity = getEntityById(id);
 
         forDeleteEntity.setStatus(RoomStatus.HIDDEN);
-
-        return mapper.toResponse(forDeleteEntity);
     }
 
     public Page<RoomResponse> list(Pageable pageable) {
@@ -64,14 +63,21 @@ public class RoomService {
         return allByStatus.map(mapper::toResponse);
     }
 
-    private RoomEntity getEntityById(Long id) {
-        RoomEntity roomEntity = roomRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Room with id=%s not found".formatted(id)));
+    public RoomEntity getEntityByIdForUpdate(Long roomId) {
+        return requireActive(roomRepository.findByIdForUpdate(roomId), roomId);
+    }
 
-        if (roomEntity.getStatus() == RoomStatus.HIDDEN) {
+    private RoomEntity getEntityById(Long id) {
+        return requireActive(roomRepository.findById(id), id);
+    }
+
+    private RoomEntity requireActive(Optional<RoomEntity> found, Long id) {
+        RoomEntity entity = found.orElseThrow(
+                () -> new NotFoundException("Room with id=%s not found".formatted(id)));
+
+        if (entity.getStatus() == RoomStatus.HIDDEN) {
             throw new NotFoundException("Room with id=%s not found".formatted(id));
         }
-
-        return roomEntity;
+        return entity;
     }
 }

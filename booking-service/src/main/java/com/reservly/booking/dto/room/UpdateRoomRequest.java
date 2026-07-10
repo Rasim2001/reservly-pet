@@ -1,6 +1,6 @@
-package com.reservly.booking.dto;
+package com.reservly.booking.dto.room;
 
-import com.reservly.booking.domain.RoomType;
+import com.reservly.booking.domain.room.RoomType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

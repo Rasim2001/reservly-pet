@@ -1,7 +1,7 @@
-package com.reservly.booking.dto;
+package com.reservly.booking.dto.room;
 
-import com.reservly.booking.domain.RoomStatus;
-import com.reservly.booking.domain.RoomType;
+import com.reservly.booking.domain.room.RoomStatus;
+import com.reservly.booking.domain.room.RoomType;
 
 import java.time.Instant;
 

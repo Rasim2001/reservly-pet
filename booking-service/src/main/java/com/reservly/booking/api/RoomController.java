@@ -1,8 +1,8 @@
 package com.reservly.booking.api;
 
-import com.reservly.booking.dto.CreateRoomRequest;
-import com.reservly.booking.dto.RoomResponse;
-import com.reservly.booking.dto.UpdateRoomRequest;
+import com.reservly.booking.dto.room.CreateRoomRequest;
+import com.reservly.booking.dto.room.RoomResponse;
+import com.reservly.booking.dto.room.UpdateRoomRequest;
 import com.reservly.booking.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -63,9 +63,10 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
-    public RoomResponse deleteRoom(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRoom(@PathVariable Long id) {
         log.info("delete room with id={}", id);
 
-        return roomService.deleteRoom(id);
+        roomService.deleteRoom(id);
     }
 }

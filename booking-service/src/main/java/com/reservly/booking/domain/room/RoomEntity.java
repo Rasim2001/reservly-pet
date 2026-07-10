@@ -1,4 +1,4 @@
-package com.reservly.booking.domain;
+package com.reservly.booking.domain.room;
 
 import jakarta.persistence.*;
 import lombok.Getter;
