@@ -21,6 +21,12 @@ services:
     volumes:
       - notification-data:/var/lib/postgresql/data
 
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+
 volumes:
   booking-data:
   notification-data:
