@@ -2,7 +2,7 @@ package com.reservly.booking.dto.room;
 
 import com.reservly.booking.domain.room.RoomType;
 import jakarta.validation.constraints.*;
-
+import lombok.Builder;
 
 public record CreateRoomRequest(
         @NotBlank @Size(max = 255) String name,
