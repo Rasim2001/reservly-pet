@@ -1,4 +1,4 @@
-package com.reservly.notificationservice;
+package com.reservly.notification;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

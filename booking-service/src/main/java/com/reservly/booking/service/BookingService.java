@@ -7,11 +7,14 @@ import com.reservly.booking.domain.booking.BookingStatus;
 import com.reservly.booking.domain.room.RoomEntity;
 import com.reservly.booking.dto.booking.BookingResponse;
 import com.reservly.booking.dto.booking.CreateBookingRequest;
+import com.reservly.booking.event.BookingCreatedEvent;
+import com.reservly.booking.event.BookingEventPublisher;
 import com.reservly.booking.repository.BookingRepository;
 import com.reservly.common.BadRequestException;
 import com.reservly.common.ConflictException;
 import com.reservly.common.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final RoomService roomService;
     private final CurrentUser currentUser;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public BookingResponse create(CreateBookingRequest createBookingRequest) {
@@ -53,7 +57,20 @@ public class BookingService {
         bookingEntity.setStatus(BookingStatus.PENDING);
         bookingEntity.setCreatedAt(Instant.now());
 
-        return mapper.toResponse(bookingRepository.save(bookingEntity));
+        BookingEntity saved = bookingRepository.save(bookingEntity);
+
+        BookingCreatedEvent bookingEvent = BookingCreatedEvent.builder()
+                .bookingId(saved.getId())
+                .roomId(roomEntity.getId())
+                .userId(currentUser.getCurrentUserId())
+                .startTime(saved.getStartTime())
+                .endTime(saved.getEndTime())
+                .createdAt(saved.getCreatedAt())
+                .build();
+
+        eventPublisher.publishEvent(bookingEvent);
+
+        return mapper.toResponse(saved);
     }
 
     public BookingResponse getById(Long id){
