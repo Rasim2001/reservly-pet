@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: rooms
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/rooms/**
+
+            - id: bookings
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/bookings/**
