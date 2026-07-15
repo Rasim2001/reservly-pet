@@ -8,7 +8,6 @@ import com.reservly.booking.domain.room.RoomEntity;
 import com.reservly.booking.dto.booking.BookingResponse;
 import com.reservly.booking.dto.booking.CreateBookingRequest;
 import com.reservly.booking.event.BookingCreatedEvent;
-import com.reservly.booking.event.BookingEventPublisher;
 import com.reservly.booking.repository.BookingRepository;
 import com.reservly.common.BadRequestException;
 import com.reservly.common.ConflictException;

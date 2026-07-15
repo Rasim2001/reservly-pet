@@ -1,6 +1,7 @@
 package com.reservly.booking.event;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -10,12 +11,13 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class BookingEventPublisher {
 
-    private static final String TOPIC = "booking.created";
+    @Value("${app.kafka.topic}")
+    private String topic;
 
     private final KafkaTemplate<String, BookingCreatedEvent> kafkaTemplate;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void publish(BookingCreatedEvent event) {
-        kafkaTemplate.send(TOPIC, event.bookingId().toString(), event);
+        kafkaTemplate.send(topic, event.bookingId().toString(), event);
     }
 }

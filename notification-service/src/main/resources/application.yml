@@ -6,7 +6,7 @@ spring:
     name: notification-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/notification
+    url: jdbc:postgresql://localhost:5433/notifications
     username: postgres
     password: root
   jpa:
@@ -16,3 +16,18 @@ spring:
       open-in-view: false
   flyway:
       enabled: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.reservly.notification.event"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.reservly.notification.event.BookingCreatedEvent
+
+app:
+  kafka:
+    topic: booking.created

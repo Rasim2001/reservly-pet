@@ -6,7 +6,7 @@ spring:
     name: booking-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/booking
+    url: jdbc:postgresql://localhost:5432/bookings
     username: postgres
     password: root
 
@@ -20,7 +20,12 @@ spring:
     bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
 
   flyway:
     enabled: true
+
+app:
+  kafka:
+    topic: booking.created
+
