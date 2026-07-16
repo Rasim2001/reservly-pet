@@ -1,0 +1,11 @@
+POST http://localhost:8080/api/bookings
+Content-Type: application/json
+
+{
+  "roomId": 5,
+  "startTime": "2026-08-20T10:00:00Z",
+  "endTime": "2026-08-20T12:00:00Z"
+}
+
+###
+GET http://localhost:8080/api/rooms

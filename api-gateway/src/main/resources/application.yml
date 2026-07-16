@@ -9,6 +9,11 @@ spring:
     gateway:
       server:
         webflux:
+
+          httpclient:
+            connect-timeout: 2000
+            response-timeout: 5s
+
           routes:
             - id: rooms
               uri: http://localhost:8082
