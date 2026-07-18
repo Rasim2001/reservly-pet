@@ -1,4 +1,5 @@
 POST http://localhost:8080/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg0Mzc0NTgxLCJleHAiOjE3ODQzNzU0ODF9.WKYukkVwR_jhiPAy5FQluoCBUiMBAncCUQ0DvydAy6jyHErVA0O7MA2RWiDQT_Fs
 Content-Type: application/json
 
 {
@@ -9,3 +10,48 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8080/api/rooms
+
+###
+GET http://localhost:8080/api/bookings/my
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg0Mzc0NTgxLCJleHAiOjE3ODQzNzU0ODF9.WKYukkVwR_jhiPAy5FQluoCBUiMBAncCUQ0DvydAy6jyHErVA0O7MA2RWiDQT_Fs
+
+###
+GET http://localhost:8080/api/rooms
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzg0Mzc0NTgxLCJleHAiOjE3ODQzNzU0ODF9.WKYukkVwR_jhiPAy5FQluoCBUiMBAncCUQ0DvydAy6jyHErVA0O7MA2RWiDQT_Fs
+
+
+###
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "rasim@mail.ru",
+  "password": "r123R45678"
+}
+
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "rasim@mail.ru",
+  "password": "r123R45678"
+}
+
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "rasim@mail.ru",
+  "password": "wrongPassword1"
+}
+
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ghost@mail.ru",
+  "password": "r123R45678"
+}
