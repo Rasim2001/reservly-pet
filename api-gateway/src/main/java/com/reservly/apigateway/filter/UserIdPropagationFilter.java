@@ -1,5 +1,6 @@
 package com.reservly.apigateway.filter;
 
+import com.reservly.common.SecurityHeaders;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -19,7 +20,7 @@ public class UserIdPropagationFilter implements GlobalFilter, Ordered {
                 .cast(JwtAuthenticationToken.class)
                 .map(auth -> exchange
                         .mutate()
-                        .request(r -> r.header("X-User-Id", Objects.requireNonNull(auth.getToken().getSubject())))
+                        .request(r -> r.header(SecurityHeaders.USER_ID, Objects.requireNonNull(auth.getToken().getSubject())))
                         .build())
                 .defaultIfEmpty(exchange)
                 .flatMap(chain::filter);

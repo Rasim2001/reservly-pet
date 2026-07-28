@@ -10,11 +10,11 @@
     <name>reservly-parent</name>
 
     <modules>
-        <module>common-lib</module>
         <module>booking-service</module>
         <module>notification-service</module>
         <module>api-gateway</module>
         <module>auth-service</module>
+        <module>common</module>
     </modules>
 
 </project>

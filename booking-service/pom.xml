@@ -117,7 +117,7 @@
 
         <dependency>
             <groupId>com.reservly</groupId>
-            <artifactId>common-lib</artifactId>
+            <artifactId>common-web</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
