@@ -49,7 +49,7 @@ public class AuthService {
         return new UserResponse(saved.getId(), saved.getEmail());
     }
 
-
+    @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
 
         Authentication authenticate;

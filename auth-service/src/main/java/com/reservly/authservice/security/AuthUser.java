@@ -12,7 +12,11 @@ public class AuthUser extends User {
 
     private final Long id;
 
-    public AuthUser(Long id, String username, @Nullable String password, Collection<? extends GrantedAuthority> authorities) {
+    public AuthUser(
+            Long id,
+            String username,
+            @Nullable String password,
+            Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
 
         this.id = id;
