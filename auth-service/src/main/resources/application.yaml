@@ -18,6 +18,10 @@ spring:
 
 
 app:
+  admin:
+    email: ${ADMIN_EMAIL:admin@reservly.com}
+    password: ${ADMIN_PASSWORD:admin12345}
+
   jwt:
     secret: HYgaLHwtjYEDH8n65MNOT6m3qD/Rl4OjNvNkgxXMgbmlR0EzhKcoUGJ1A6Uhu/V3
     ttl: 15m

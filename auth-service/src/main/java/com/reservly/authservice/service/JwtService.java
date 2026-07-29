@@ -1,5 +1,6 @@
 package com.reservly.authservice.service;
 
+import com.reservly.authservice.domain.UserRole;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -22,10 +23,11 @@ public class JwtService {
         this.ttl = ttl;
     }
 
-    public String generateToken(Long userId) {
+    public String generateToken(Long userId, UserRole role) {
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(userId.toString())
+                .claim("role", role.name())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(ttl)))
                 .signWith(key)

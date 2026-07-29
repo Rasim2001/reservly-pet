@@ -64,6 +64,6 @@ public class AuthService {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        return new AuthResponse(jwtService.generateToken(user.getId()));
+        return new AuthResponse(jwtService.generateToken(user.getId(), user.getRole()));
     }
 }

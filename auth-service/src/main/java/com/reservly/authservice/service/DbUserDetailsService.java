@@ -19,7 +19,7 @@ public class DbUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
             return userRepository.findByEmail(username.toLowerCase())
-                    .map(u -> new AuthUser(u.getId(), u.getEmail().toLowerCase(), u.getPasswordHash(), List.of()))
+                    .map(u -> new AuthUser(u.getId(), u.getRole(), u.getEmail().toLowerCase(), u.getPasswordHash(), List.of()))
                     .orElseThrow(() -> new UsernameNotFoundException("User with email = " + username + "not found"));
     }
 }

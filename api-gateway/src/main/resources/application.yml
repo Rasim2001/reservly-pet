@@ -33,3 +33,5 @@ spring:
 app:
   jwt:
     secret: HYgaLHwtjYEDH8n65MNOT6m3qD/Rl4OjNvNkgxXMgbmlR0EzhKcoUGJ1A6Uhu/V3
+
+
