@@ -2,6 +2,7 @@ package com.reservly.authservice.repository;
 
 import com.reservly.authservice.domain.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

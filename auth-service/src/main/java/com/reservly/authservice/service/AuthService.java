@@ -1,11 +1,9 @@
 package com.reservly.authservice.service;
 
+import com.reservly.authservice.domain.RefreshTokenEntity;
+import com.reservly.authservice.dto.*;
 import com.reservly.authservice.security.AuthUser;
 import com.reservly.authservice.domain.UserEntity;
-import com.reservly.authservice.dto.AuthResponse;
-import com.reservly.authservice.dto.LoginRequest;
-import com.reservly.authservice.dto.RegisterRequest;
-import com.reservly.authservice.dto.UserResponse;
 import com.reservly.authservice.repository.UserRepository;
 import com.reservly.common.ConflictException;
 import com.reservly.common.UnauthorizedException;
@@ -26,9 +24,10 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final JwtService jwtService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
 
     @Transactional
@@ -49,13 +48,14 @@ public class AuthService {
         return new UserResponse(saved.getId(), saved.getEmail());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional()
     public AuthResponse login(LoginRequest request) {
 
         Authentication authenticate;
 
         try {
-            authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email().toLowerCase(), request.password()));
+            authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email().toLowerCase(), request.password()));
         } catch (AuthenticationException e) {
             throw new UnauthorizedException("Invalid email or password");
         }
@@ -64,6 +64,28 @@ public class AuthService {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        return new AuthResponse(jwtService.generateToken(user.getId(), user.getRole()));
+        String accessToken =jwtService.generateToken(user.getId(), user.getRole());
+        UserEntity userEntity = userRepository.getReferenceById(user.getId());
+        String refreshToken = refreshTokenService.create(userEntity);
+
+        return new AuthResponse(accessToken, refreshToken);
+    }
+
+    @Transactional
+    public AuthResponse refresh(RefreshRequest request) {
+        RefreshTokenEntity oldRefreshEntity = refreshTokenService.validate(request.refreshToken());
+        UserEntity userEntity = oldRefreshEntity.getUser();
+
+        refreshTokenService.deleteByToken(request.refreshToken());
+
+        String accessToken = jwtService.generateToken(userEntity.getId(), userEntity.getRole());
+        String refreshToken = refreshTokenService.create(userEntity);
+
+        return new AuthResponse(accessToken, refreshToken);
+    }
+
+    @Transactional
+    public void logout(LogoutRequest request) {
+        refreshTokenService.deleteByToken(request.refreshToken());
     }
 }

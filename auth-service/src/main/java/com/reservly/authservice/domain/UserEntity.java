@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Setter
@@ -24,6 +26,9 @@ public class UserEntity {
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshTokenEntity> refreshTokens = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)

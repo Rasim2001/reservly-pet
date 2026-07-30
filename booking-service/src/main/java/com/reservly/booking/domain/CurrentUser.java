@@ -3,9 +3,7 @@ package com.reservly.booking.domain;
 import com.reservly.common.SecurityHeaders;
 import com.reservly.common.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Component

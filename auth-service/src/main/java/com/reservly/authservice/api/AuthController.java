@@ -1,9 +1,6 @@
 package com.reservly.authservice.api;
 
-import com.reservly.authservice.dto.AuthResponse;
-import com.reservly.authservice.dto.LoginRequest;
-import com.reservly.authservice.dto.RegisterRequest;
-import com.reservly.authservice.dto.UserResponse;
+import com.reservly.authservice.dto.*;
 import com.reservly.authservice.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/auth")
-@RestController
-@RequiredArgsConstructor
 @Slf4j
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
@@ -34,8 +31,24 @@ public class AuthController {
     public AuthResponse login(@RequestBody @Valid LoginRequest request) {
         AuthResponse login = authService.login(request);
 
-        log.info("Login account with token = {}", login.accessToken());
+        log.info("Login successful");
 
         return login;
+    }
+
+    @PostMapping("/refresh")
+    public AuthResponse refresh(@RequestBody @Valid RefreshRequest request) {
+
+        log.info("refresh token");
+
+        return authService.refresh(request);
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(@RequestBody @Valid LogoutRequest request) {
+        log.info("logout happened");
+
+        authService.logout(request);
     }
 }
