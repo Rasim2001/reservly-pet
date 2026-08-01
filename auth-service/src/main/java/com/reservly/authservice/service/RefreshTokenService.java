@@ -48,13 +48,6 @@ public class RefreshTokenService {
         repository.deleteByToken(token);
     }
 
-    @Transactional
-    public void deleteByUserId(Long userId) {
-        log.info("delete by user_id : {}", userId);
-
-        repository.deleteByUser_Id(userId);
-    }
-
     @Transactional(readOnly = true)
     public RefreshTokenEntity validate(String token) {
         RefreshTokenEntity entity = repository.findByToken(token)

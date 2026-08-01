@@ -7,6 +7,7 @@ import com.reservly.authservice.domain.UserEntity;
 import com.reservly.authservice.repository.UserRepository;
 import com.reservly.common.ConflictException;
 import com.reservly.common.UnauthorizedException;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @Slf4j
@@ -29,6 +31,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
+    private final TokenDenylistService tokenDenylistService;
 
     @Transactional
     public UserResponse register(RegisterRequest request) {
@@ -85,7 +88,15 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(LogoutRequest request) {
+    public void logout(LogoutRequest request, String accessToken) {
+
+        Claims claims = jwtService.parseToken(accessToken);
+        Duration ttl = Duration.between(Instant.now(), claims.getExpiration().toInstant());
+
+        if(!ttl.isNegative()){
+            tokenDenylistService.denylist(claims.getId(), ttl);
+        }
+
         refreshTokenService.deleteByToken(request.refreshToken());
     }
 }

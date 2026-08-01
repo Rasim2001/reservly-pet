@@ -2,9 +2,11 @@ package com.reservly.authservice.api;
 
 import com.reservly.authservice.dto.*;
 import com.reservly.authservice.service.AuthService;
+import com.reservly.common.UnauthorizedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
+    private static final String BEARER_PREFIX = "Bearer ";
 
     private final AuthService authService;
 
@@ -46,9 +50,16 @@ public class AuthController {
 
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void logout(@RequestBody @Valid LogoutRequest request) {
+    public void logout(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody @Valid LogoutRequest request) {
         log.info("logout happened");
 
-        authService.logout(request);
+        if(authHeader == null || !authHeader.startsWith(BEARER_PREFIX))
+            throw new UnauthorizedException("Missing access token");
+
+        String accessToken = authHeader.substring(BEARER_PREFIX.length());
+
+        authService.logout(request, accessToken);
     }
 }
