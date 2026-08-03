@@ -25,6 +25,17 @@ spring:
               predicates:
                 - Path=/api/bookings/**
 
+            - id: auth-login
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/auth/login
+                - Method=POST
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 10
+
             - id: auth
               uri: http://localhost:8081
               predicates:
