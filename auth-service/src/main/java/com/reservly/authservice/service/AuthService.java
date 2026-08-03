@@ -6,6 +6,7 @@ import com.reservly.authservice.security.AuthUser;
 import com.reservly.authservice.domain.UserEntity;
 import com.reservly.authservice.repository.UserRepository;
 import com.reservly.common.ConflictException;
+import com.reservly.common.TooManyRequestsException;
 import com.reservly.common.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
     private final TokenDenylistService tokenDenylistService;
+    private final LoginAttemptService  loginAttemptService;
 
     @Transactional
     public UserResponse register(RegisterRequest request) {
@@ -55,17 +57,25 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
 
         Authentication authenticate;
+        String email = request.email().toLowerCase();
+
+        if (loginAttemptService.isBlocked(email)) {
+            throw new TooManyRequestsException("Too many requests");
+        }
 
         try {
             authenticate = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.email().toLowerCase(), request.password()));
+                    new UsernamePasswordAuthenticationToken(email, request.password()));
         } catch (AuthenticationException e) {
+            loginAttemptService.recordFailure(email);
             throw new UnauthorizedException("Invalid email or password");
         }
 
         if (!(authenticate.getPrincipal() instanceof AuthUser user)) {
             throw new UnauthorizedException("Invalid email or password");
         }
+
+        loginAttemptService.reset(email);
 
         String accessToken =jwtService.generateToken(user.getId(), user.getRole());
         UserEntity userEntity = userRepository.getReferenceById(user.getId());

@@ -6,3 +6,4 @@ export const USER = {
 };
 
 export const JSON_HEADERS = { headers: { 'Content-Type': 'application/json' } };
+export const AUTH_URL = __ENV.AUTH_URL || 'http://localhost:8081';
