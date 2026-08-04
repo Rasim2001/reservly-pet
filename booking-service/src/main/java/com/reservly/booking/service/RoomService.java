@@ -9,6 +9,8 @@ import com.reservly.booking.dto.room.UpdateRoomRequest;
 import com.reservly.booking.repository.RoomRepository;
 import com.reservly.common.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,10 +36,18 @@ public class RoomService {
         return mapper.toResponse(roomRepository.save(entity));
     }
 
+    @Cacheable(
+            value = "room",
+            key = "#id"
+    )
     public RoomResponse getById(Long id) {
         return mapper.toResponse(getEntityById(id));
     }
 
+    @CacheEvict(
+            value = "room",
+            key = "#id"
+    )
     @Transactional
     public RoomResponse updateRoom(Long id, UpdateRoomRequest updateRoomRequest) {
 
@@ -50,6 +60,10 @@ public class RoomService {
         return mapper.toResponse(findRoomEntity);
     }
 
+    @CacheEvict(
+            value = "room",
+            key = "#id"
+    )
     @Transactional
     public void deleteRoom(Long id) {
         RoomEntity forDeleteEntity = getEntityById(id);
@@ -66,6 +80,7 @@ public class RoomService {
     public RoomEntity getEntityByIdForUpdate(Long roomId) {
         return requireActive(roomRepository.findByIdForUpdate(roomId), roomId);
     }
+
 
     private RoomEntity getEntityById(Long id) {
         return requireActive(roomRepository.findById(id), id);
