@@ -27,7 +27,7 @@ public class LoginAttemptService {
         this.window = window;
     }
 
-    public Boolean isBlocked(String email) {
+    public boolean isBlocked(String email) {
         String attempts = redisTemplate.opsForValue().get(RedisKeys.LOGIN_FAIL_PREFIX + email);
 
         return attempts != null && Integer.parseInt(attempts) >= maxAttempts;
