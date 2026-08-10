@@ -2,6 +2,7 @@ package com.reservly.booking.api;
 
 import com.reservly.booking.dto.booking.BookingResponse;
 import com.reservly.booking.dto.booking.CreateBookingRequest;
+import com.reservly.booking.service.BookingOrchestrator;
 import com.reservly.booking.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,11 +21,12 @@ import org.springframework.web.bind.annotation.*;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final BookingOrchestrator bookingOrchestrator;
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public BookingResponse createBooking(@RequestBody @Valid CreateBookingRequest request) {
-        BookingResponse bookingResponse = bookingService.create(request);
+        BookingResponse bookingResponse = bookingOrchestrator.createAndPay(request);
 
         log.info("Created booking with id={}", bookingResponse.id());
 

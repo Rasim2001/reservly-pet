@@ -94,6 +94,28 @@ public class BookingService {
         return mapper.toResponse(bookingEntity);
     }
 
+    @Transactional
+    public BookingResponse confirm(Long bookingId) {
+        BookingEntity booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Booking with id = '%s' not found".formatted(bookingId)));
+
+        if (booking.getStatus() == BookingStatus.PENDING) {
+            booking.setStatus(BookingStatus.CONFIRMED);
+        }
+        return mapper.toResponse(booking);
+    }
+
+    @Transactional
+    public BookingResponse markPaymentFailed(Long bookingId) {
+        BookingEntity booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Booking with id = '%s' not found".formatted(bookingId)));
+
+        if (booking.getStatus() == BookingStatus.PENDING) {
+            booking.setStatus(BookingStatus.CANCELLED);
+        }
+        return mapper.toResponse(booking);
+    }
+
     private BookingEntity getBookingEntity(Optional<BookingEntity> found, Long id) {
         BookingEntity bookingEntity = found
                 .orElseThrow(() -> new NotFoundException("Booking with id = '%s' not found".formatted(id)));

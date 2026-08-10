@@ -34,3 +34,5 @@ app:
   kafka:
     topic: booking.created
 
+payment-service:
+  base-url: http://localhost:8085
