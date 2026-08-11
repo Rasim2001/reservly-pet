@@ -33,12 +33,12 @@ public class BookingController {
         return bookingResponse;
     }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/cancel")
     public BookingResponse cancel(@PathVariable Long id) {
 
         log.info("Cancelled booking with id = {}", id);
 
-        return bookingService.cancel(id);
+        return bookingOrchestrator.cancelAndRefund(id);
     }
 
     @GetMapping("/my")

@@ -19,6 +19,11 @@ public class PaymentController {
         return paymentService.create(request);
     }
 
+    @PostMapping("/{bookingId}/refund")
+    public PaymentResponse refund(@PathVariable Long bookingId) {
+        return paymentService.refund(bookingId);
+    }
+
     @GetMapping("/{bookingId}")
     public PaymentResponse getByBookingId(@PathVariable Long bookingId) {
         return paymentService.getByBookingId(bookingId);

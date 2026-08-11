@@ -1,5 +1,6 @@
 package com.reservly.paymentservice.service;
 
+import com.reservly.common.ConflictException;
 import com.reservly.common.NotFoundException;
 import com.reservly.paymentservice.domain.PaymentEntity;
 import com.reservly.paymentservice.domain.PaymentStatus;
@@ -31,7 +32,7 @@ public class PaymentService {
 
         Optional<PaymentEntity> found = repository.findByBookingId(request.bookingId());
 
-        if(found.isPresent()){
+        if (found.isPresent()) {
             log.info("Payment with booking_id = {} already exists", request.bookingId());
 
             return mapper.toResponse(found.get());
@@ -48,6 +49,21 @@ public class PaymentService {
         PaymentEntity saved = repository.save(entity);
 
         return mapper.toResponse(saved);
+    }
+
+    @Transactional
+    public PaymentResponse refund(Long bookingId) {
+        PaymentEntity paymentEntity = repository.findByBookingId(bookingId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Payment for booking id = %s not found".formatted(bookingId)));
+
+        switch (paymentEntity.getPaymentStatus()) {
+            case SUCCESS -> paymentEntity.setPaymentStatus(PaymentStatus.REFUNDED);
+            case FAILED -> throw new ConflictException(
+                    "Payment for booking id = '%s' has a FAILED status".formatted(bookingId));
+        }
+
+        return mapper.toResponse(paymentEntity);
     }
 
     @Transactional(readOnly = true)

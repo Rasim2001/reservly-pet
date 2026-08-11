@@ -19,6 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -49,12 +52,19 @@ public class BookingService {
             throw new ConflictException("Room is already booked for the requested time interval");
         }
 
+        long minutes = Duration.between(createBookingRequest.startTime(), createBookingRequest.endTime()).toMinutes();
+
+        BigDecimal hours = BigDecimal.valueOf(minutes)
+                .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
+
         BookingEntity bookingEntity = mapper.toEntity(createBookingRequest);
 
         bookingEntity.setUserId(currentUser.getCurrentUserId());
         bookingEntity.setRoom(roomEntity);
         bookingEntity.setStatus(BookingStatus.PENDING);
         bookingEntity.setCreatedAt(Instant.now());
+        bookingEntity.setTotalPrice(
+                roomEntity.getPricePerHour().multiply(hours).setScale(2, RoundingMode.HALF_UP));
 
         BookingEntity saved = bookingRepository.save(bookingEntity);
 
@@ -104,6 +114,7 @@ public class BookingService {
         }
         return mapper.toResponse(booking);
     }
+
 
     @Transactional
     public BookingResponse markPaymentFailed(Long bookingId) {

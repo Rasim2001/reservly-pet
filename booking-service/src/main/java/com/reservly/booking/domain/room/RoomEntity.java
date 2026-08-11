@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
@@ -35,4 +36,7 @@ public class RoomEntity {
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
+
+    @Column(name = "price_per_hour", precision = 19, scale = 2, nullable = false)
+    private BigDecimal pricePerHour;
 }

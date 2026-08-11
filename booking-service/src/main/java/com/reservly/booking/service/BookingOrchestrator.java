@@ -12,14 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
-import java.math.BigDecimal;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingOrchestrator {
-
-    private static final BigDecimal FIXED_AMOUNT = BigDecimal.valueOf(10000);
 
     private final BookingService bookingService;
     private final PaymentHttpClient paymentHttpClient;
@@ -29,7 +25,7 @@ public class BookingOrchestrator {
         BookingResponse booking = bookingService.create(request);
 
         try {
-            PaymentResponse payment = paymentHttpClient.createPayment(new PaymentRequest(booking.id(), FIXED_AMOUNT));
+            PaymentResponse payment = paymentHttpClient.createPayment(new PaymentRequest(booking.id(), booking.totalPrice()));
 
             return payment.status() == PaymentStatus.SUCCESS
                     ? bookingService.confirm(booking.id())
@@ -41,8 +37,30 @@ public class BookingOrchestrator {
 
             return bookingService.markPaymentFailed(booking.id());
         }catch (RestClientException e) {
-            log.info("Payment status UNKNOWN for booking {} — оставляем PENDING", booking.id(), e);
+            log.info("Payment status UNKNOWN for booking {}", booking.id(), e);
             return booking;
         }
+    }
+
+
+    public BookingResponse cancelAndRefund(Long bookingId) {
+
+        BookingResponse cancel = bookingService.cancel(bookingId);
+
+        try {
+            paymentHttpClient.refund(bookingId);
+        }catch (HttpClientErrorException e) {
+
+            log.info("Refund rejected for booking {}: {}", bookingId, e.getStatusCode());
+
+            return cancel;
+
+        }catch (RestClientException e) {
+            log.info("Payment status UNKNOWN for booking {}", bookingId, e);
+            return cancel;
+        }
+
+
+        return cancel;
     }
 }

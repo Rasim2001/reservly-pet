@@ -6,8 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
+
 public record UpdateRoomRequest (
         @NotBlank @Size(max = 255) String name,
         @NotNull RoomType type,
+        @NotNull @Positive BigDecimal pricePerHour,
         @Positive(message = "must be greater than 0") Integer capacity
 ){}

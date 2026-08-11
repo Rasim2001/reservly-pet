@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
@@ -38,4 +39,7 @@ public class BookingEntity {
 
     @Column(name = "created_at")
     private Instant createdAt;
+
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
 }
