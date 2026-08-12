@@ -5,9 +5,9 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5434/users
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5434}/users
     username: postgres
-    password: root
+    password: ${DB_PASSWORD:root}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -17,7 +17,7 @@ spring:
     enabled: true
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST:localhost}
       port: 6379
 
 
@@ -31,6 +31,6 @@ app:
       window: 15m
 
   jwt:
-    secret: HYgaLHwtjYEDH8n65MNOT6m3qD/Rl4OjNvNkgxXMgbmlR0EzhKcoUGJ1A6Uhu/V3
+    secret: ${JWT_SECRET:HYgaLHwtjYEDH8n65MNOT6m3qD/Rl4OjNvNkgxXMgbmlR0EzhKcoUGJ1A6Uhu/V3}
     ttl: 15m
     refresh-ttl: 7d

@@ -16,17 +16,17 @@ spring:
 
           routes:
             - id: rooms
-              uri: http://localhost:8082
+              uri: ${BOOKING_URI:http://localhost:8082}
               predicates:
                 - Path=/api/rooms/**
 
             - id: bookings
-              uri: http://localhost:8082
+              uri: ${BOOKING_URI:http://localhost:8082}
               predicates:
                 - Path=/api/bookings/**
 
             - id: auth-login
-              uri: http://localhost:8081
+              uri: ${AUTH_URI:http://localhost:8081}
               predicates:
                 - Path=/api/auth/login
                 - Method=POST
@@ -42,12 +42,12 @@ spring:
                 - Path=/api/auth/**
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST:localhost}
       port: 6379
 
 
 app:
   jwt:
-    secret: HYgaLHwtjYEDH8n65MNOT6m3qD/Rl4OjNvNkgxXMgbmlR0EzhKcoUGJ1A6Uhu/V3
+    secret: ${JWT_SECRET:HYgaLHwtjYEDH8n65MNOT6m3qD/Rl4OjNvNkgxXMgbmlR0EzhKcoUGJ1A6Uhu/V3}
 
 

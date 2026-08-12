@@ -14,6 +14,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -49,7 +50,7 @@ public class BookingRaceIT {
     @Test
     void onlyOneBookingWinsTheRace() throws Exception {
 
-        CreateRoomRequest roomRequest = new CreateRoomRequest("TestRoom", RoomType.COWORKING, 16);
+        CreateRoomRequest roomRequest = new CreateRoomRequest("TestRoom", RoomType.COWORKING, BigDecimal.valueOf(300), 16);
 
         RoomResponse roomResponse = roomService.create(roomRequest);
 
