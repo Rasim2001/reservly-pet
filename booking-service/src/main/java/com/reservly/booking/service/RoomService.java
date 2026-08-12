@@ -56,6 +56,7 @@ public class RoomService {
         findRoomEntity.setName(updateRoomRequest.name());
         findRoomEntity.setCapacity(updateRoomRequest.capacity());
         findRoomEntity.setType(updateRoomRequest.type());
+        findRoomEntity.setPricePerHour(updateRoomRequest.pricePerHour());
 
         return mapper.toResponse(findRoomEntity);
     }

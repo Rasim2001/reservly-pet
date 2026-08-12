@@ -37,7 +37,7 @@ spring:
                     redis-rate-limiter.burstCapacity: 10
 
             - id: auth
-              uri: http://localhost:8081
+              uri: ${AUTH_URI:http://localhost:8081}
               predicates:
                 - Path=/api/auth/**
   data:

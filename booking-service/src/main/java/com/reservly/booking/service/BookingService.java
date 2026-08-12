@@ -68,24 +68,15 @@ public class BookingService {
 
         BookingEntity saved = bookingRepository.save(bookingEntity);
 
-        BookingCreatedEvent bookingEvent = BookingCreatedEvent.builder()
-                .bookingId(saved.getId())
-                .roomId(roomEntity.getId())
-                .userId(currentUser.getCurrentUserId())
-                .startTime(saved.getStartTime())
-                .endTime(saved.getEndTime())
-                .createdAt(saved.getCreatedAt())
-                .build();
-
-        eventPublisher.publishEvent(bookingEvent);
-
         return mapper.toResponse(saved);
     }
 
-    public BookingResponse getById(Long id){
+    @Transactional(readOnly = true)
+    public BookingResponse getById(Long id) {
         return mapper.toResponse(getBookingEntity(bookingRepository.findById(id), id));
     }
 
+    @Transactional(readOnly = true)
     public Page<BookingResponse> getMy(Pageable pageable) {
         Page<BookingEntity> list = bookingRepository.findAllByUserId(currentUser.getCurrentUserId(), pageable);
 
@@ -96,7 +87,7 @@ public class BookingService {
     public BookingResponse cancel(Long id) {
         BookingEntity bookingEntity = getBookingEntity(bookingRepository.findById(id), id);
 
-        if(bookingEntity.getStatus().equals(BookingStatus.COMPLETED) || bookingEntity.getStatus().equals(BookingStatus.CANCELLED))
+        if (bookingEntity.getStatus() != BookingStatus.CONFIRMED)
             throw new ConflictException("You can't cancel booking with status %s".formatted(bookingEntity.getStatus()));
 
         bookingEntity.setStatus(BookingStatus.CANCELLED);
@@ -105,12 +96,25 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingResponse confirm(Long bookingId) {
+    public BookingResponse confirm(Long bookingId, Long roomId) {
         BookingEntity booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking with id = '%s' not found".formatted(bookingId)));
 
         if (booking.getStatus() == BookingStatus.PENDING) {
             booking.setStatus(BookingStatus.CONFIRMED);
+
+            BookingCreatedEvent bookingEvent = BookingCreatedEvent.builder()
+                    .bookingId(booking.getId())
+                    .roomId(roomId)
+                    .userId(currentUser.getCurrentUserId())
+                    .startTime(booking.getStartTime())
+                    .endTime(booking.getEndTime())
+                    .createdAt(booking.getCreatedAt())
+                    .build();
+
+            eventPublisher.publishEvent(bookingEvent);
+
+
         }
         return mapper.toResponse(booking);
     }
@@ -131,7 +135,7 @@ public class BookingService {
         BookingEntity bookingEntity = found
                 .orElseThrow(() -> new NotFoundException("Booking with id = '%s' not found".formatted(id)));
 
-        if(!bookingEntity.getUserId().equals(currentUser.getCurrentUserId()))
+        if (!bookingEntity.getUserId().equals(currentUser.getCurrentUserId()))
             throw new NotFoundException("Booking with id = '%s' not found".formatted(id));
 
         return bookingEntity;

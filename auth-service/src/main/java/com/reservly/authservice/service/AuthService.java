@@ -1,6 +1,7 @@
 package com.reservly.authservice.service;
 
 import com.reservly.authservice.domain.RefreshTokenEntity;
+import com.reservly.authservice.domain.UserRole;
 import com.reservly.authservice.dto.*;
 import com.reservly.authservice.security.AuthUser;
 import com.reservly.authservice.domain.UserEntity;
@@ -47,6 +48,7 @@ public class AuthService {
         userEntity.setEmail(lowerCaseEmail);
         userEntity.setPasswordHash(passwordEncoder.encode(request.password()));
         userEntity.setCreatedAt(Instant.now());
+        userEntity.setRole(UserRole.USER);
 
         UserEntity saved = userRepository.save(userEntity);
 
