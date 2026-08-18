@@ -30,4 +30,10 @@ services:
     environment:
       SHOW_SQL: "true"
       RECONCILER_INTERVAL_MS: "10000"
-      RECONCILER_THRESHOLD_MINUTES: "0"
+      RECONCILER_THRESHOLD_MINUTES: "1"
+
+  auth-service:
+    ports: [ "8081:8081" ]
+
+  payment-service:
+      ports: [ "8085:8085" ]

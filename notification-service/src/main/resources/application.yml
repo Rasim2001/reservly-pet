@@ -6,7 +6,7 @@ spring:
     name: notification-service
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/notifications
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5436}/notifications
     username: postgres
     password: ${DB_PASSWORD:root}
   jpa:
@@ -18,7 +18,7 @@ spring:
       enabled: true
 
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
     consumer:
       group-id: notification-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

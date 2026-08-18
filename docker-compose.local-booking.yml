@@ -1,0 +1,6 @@
+services:
+  api-gateway:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      BOOKING_URI: http://host.docker.internal:8082
