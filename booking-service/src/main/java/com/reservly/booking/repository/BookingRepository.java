@@ -28,4 +28,7 @@ public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
 
 
     Page<BookingEntity> findAllByUserId(Long userId, Pageable pageable);
+
+    List<BookingEntity> findAllByStatusAndCreatedAtBefore(
+            BookingStatus status, Instant threshold, Pageable pageable);
 }

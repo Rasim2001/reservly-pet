@@ -96,7 +96,7 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingResponse confirm(Long bookingId, Long roomId) {
+    public BookingResponse confirm(Long bookingId) {
         BookingEntity booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking with id = '%s' not found".formatted(bookingId)));
 
@@ -105,7 +105,7 @@ public class BookingService {
 
             BookingCreatedEvent bookingEvent = BookingCreatedEvent.builder()
                     .bookingId(booking.getId())
-                    .roomId(roomId)
+                    .roomId(booking.getRoom().getId())
                     .userId(currentUser.getCurrentUserId())
                     .startTime(booking.getStartTime())
                     .endTime(booking.getEndTime())
@@ -113,9 +113,8 @@ public class BookingService {
                     .build();
 
             eventPublisher.publishEvent(bookingEvent);
-
-
         }
+
         return mapper.toResponse(booking);
     }
 
