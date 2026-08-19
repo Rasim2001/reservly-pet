@@ -5,19 +5,19 @@ services:
       - "8090:8080"
 
   auth-db:
-    ports: ["5434:5432"]
+    ports: [ "5434:5432" ]
 
   booking-db:
-    ports: ["5433:5432"]
+    ports: [ "5433:5432" ]
 
   payment-db:
-    ports: ["5435:5432"]
+    ports: [ "5435:5432" ]
 
   notification-db:
-    ports: ["5436:5432"]
+    ports: [ "5436:5432" ]
 
   redis:
-    ports: ["6379:6379"]
+    ports: [ "6379:6379" ]
 
   kafka:
     ports: [ "9094:9094" ]
@@ -27,6 +27,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
 
   booking-service:
+    ports: [ "8082:8082" ]
     environment:
       SHOW_SQL: "true"
       RECONCILER_INTERVAL_MS: "10000"
@@ -36,4 +37,7 @@ services:
     ports: [ "8081:8081" ]
 
   payment-service:
-      ports: [ "8085:8085" ]
+    ports: [ "8085:8085" ]
+
+  notification-service:
+    ports: [ "8083:8083" ]
