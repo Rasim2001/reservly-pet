@@ -30,13 +30,13 @@ Kafka, Redis, Docker Compose, Testcontainers.
 
 ```mermaid
 flowchart LR
-    Client([Клиент]) --> GW[api-gateway :8080]
+    Client([Client]) --> GW[api-gateway :8080]
 
     GW --> AUTH[auth-service]
     GW --> BOOK[booking-service]
 
     BOOK -->|HTTP| PAY[payment-service]
-    BOOK -->|события| K[(Kafka)]
+    BOOK -->|events| K[(Kafka)]
     K --> NOTIF[notification-service]
 
     AUTH --- ADB[(auth-db)]
