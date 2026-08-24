@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +74,13 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public BookingResponse getById(Long id) {
-        return mapper.toResponse(getBookingEntity(bookingRepository.findById(id), id));
+
+        BookingEntity bookingEntity = getBookingEntity(bookingRepository.findById(id), id);
+
+        if(!currentUser.getCurrentUserId().equals(bookingEntity.getUserId()))
+            throw new AccessDeniedException("Cannot read another user's booking");
+
+        return mapper.toResponse(bookingEntity);
     }
 
     @Transactional(readOnly = true)
@@ -86,6 +93,9 @@ public class BookingService {
     @Transactional
     public BookingResponse cancel(Long id) {
         BookingEntity bookingEntity = getBookingEntity(bookingRepository.findById(id), id);
+
+        if(!currentUser.getCurrentUserId().equals(bookingEntity.getUserId()))
+            throw new AccessDeniedException("Cannot cancel another user's booking");
 
         if (bookingEntity.getStatus() != BookingStatus.CONFIRMED)
             throw new ConflictException("You can't cancel booking with status %s".formatted(bookingEntity.getStatus()));
