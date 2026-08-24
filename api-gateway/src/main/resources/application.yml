@@ -1,5 +1,6 @@
 server:
   port: 8080
+  forward-headers-strategy: framework
 
 spring:
   application:
@@ -25,6 +26,13 @@ spring:
               predicates:
                 - Path=/api/bookings/**
 
+            - id: booking-docs
+              uri: ${BOOKING_URI:http://localhost:8082}
+              predicates:
+                - Path=/api-docs/bookings/**
+              filters:
+                - RewritePath=/api-docs/bookings(?<segment>.*), /v3/api-docs$\{segment}
+
             - id: auth-login
               uri: ${AUTH_URI:http://localhost:8081}
               predicates:
@@ -40,6 +48,13 @@ spring:
               uri: ${AUTH_URI:http://localhost:8081}
               predicates:
                 - Path=/api/auth/**
+
+            - id: auth-docs
+              uri: ${AUTH_URI:http://localhost:8081}
+              predicates:
+                - Path=/api-docs/auth/**
+              filters:
+                - RewritePath=/api-docs/auth(?<segment>.*), /v3/api-docs$\{segment}
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -49,5 +64,13 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:HYgaLHwtjYEDH8n65MNOT6m3qD/Rl4OjNvNkgxXMgbmlR0EzhKcoUGJ1A6Uhu/V3}
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: booking-service
+        url: /api-docs/bookings
+      - name: auth-service
+        url: /api-docs/auth
 
 
