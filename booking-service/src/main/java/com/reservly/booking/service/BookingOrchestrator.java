@@ -25,7 +25,9 @@ public class BookingOrchestrator {
         BookingResponse booking = bookingService.create(request);
 
         try {
-            PaymentResponse payment = paymentHttpClient.createPayment(new PaymentRequest(booking.id(), booking.totalPrice()));
+            PaymentResponse payment = paymentHttpClient.createPayment(
+                    new PaymentRequest(booking.id(), booking.totalPrice())
+            );
 
             return payment.status() == PaymentStatus.SUCCESS
                     ? bookingService.confirm(booking.id())

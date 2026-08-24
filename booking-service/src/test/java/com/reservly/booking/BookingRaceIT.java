@@ -5,6 +5,7 @@ import com.reservly.booking.dto.room.CreateRoomRequest;
 import com.reservly.booking.dto.room.RoomResponse;
 import com.reservly.booking.repository.BookingRepository;
 import com.reservly.booking.service.RoomService;
+import com.reservly.common.SecurityHeaders;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,9 +60,13 @@ public class BookingRaceIT {
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
 
+        Instant start = Instant.now().plus(Duration.ofDays(1)).truncatedTo(ChronoUnit.HOURS);
+        Instant end = start.plus(Duration.ofHours(1));
+
+
         String json = """
-                { "roomId": %d, "startTime": "2026-07-20T02:00:00Z", "endTime": "2026-07-20T03:00:00Z" }
-                """.formatted(roomResponse.id());
+                { "roomId": %d, "startTime": "%s", "endTime": "%s" }
+                """.formatted(roomResponse.id(), start, end);
 
         List<Integer> responseList = Collections.synchronizedList(new ArrayList<>());
 
@@ -70,6 +78,8 @@ public class BookingRaceIT {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create("http://localhost:" + port + "/api/bookings"))
                         .header("Content-Type", "application/json")
+                        .header(SecurityHeaders.USER_ID, "1")
+                        .header(SecurityHeaders.USER_ROLE, "USER")
                         .POST(HttpRequest.BodyPublishers.ofString(json))
                         .build();
 

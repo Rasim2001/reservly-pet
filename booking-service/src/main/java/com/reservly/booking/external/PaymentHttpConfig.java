@@ -25,6 +25,7 @@ public class PaymentHttpConfig {
 
         return builder
                 .baseUrl(paymentServiceBaseUrl)
+                .requestFactory(factory)
                 .build();
     }
 
