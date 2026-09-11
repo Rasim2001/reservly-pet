@@ -49,18 +49,16 @@ public class PendingBookingReconciler {
 
                 if (payment.status() == PaymentStatus.SUCCESS) {
                     bookingService.confirm(bookingEntity.getId());
-                    log.info("Reconcile: Confirm booking with id = {}", bookingEntity.getId());
                 } else if (payment.status() == PaymentStatus.FAILED) {
                     bookingService.markPaymentFailed(bookingEntity.getId());
-                    log.info("Reconcile: Payment failed with booking id = {}", bookingEntity.getId());
                 }
 
             } catch (HttpClientErrorException.NotFound exception) {
                 bookingService.markPaymentFailed(bookingEntity.getId());
-
-                log.info("Reconcile throw HttpClientErrorException : {}", exception.getMessage());
             } catch (RestClientException exception) {
                 log.info("Reconcile throw RestClientException : {}", exception.getMessage());
+            }catch (Exception e) {
+                log.info("Reconcile throw: unexpected error for booking {}", bookingEntity.getId(), e);
             }
 
         }

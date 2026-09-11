@@ -38,7 +38,7 @@ public class BookingOrchestrator {
             log.info("Payment rejected for booking {}: {}", booking.id(), e.getStatusCode());
 
             return bookingService.markPaymentFailed(booking.id());
-        }catch (RestClientException e) {
+        } catch (RestClientException e) {
             log.info("Payment status UNKNOWN for booking {}", booking.id(), e);
             return booking;
         }
@@ -47,22 +47,22 @@ public class BookingOrchestrator {
 
     public BookingResponse cancelAndRefund(Long bookingId) {
 
-        BookingResponse cancel = bookingService.cancel(bookingId);
+        BookingResponse startCancel = bookingService.startCancel(bookingId);
 
         try {
             paymentHttpClient.refund(bookingId);
-        }catch (HttpClientErrorException e) {
+
+            return bookingService.cancel(bookingId);
+
+        } catch (HttpClientErrorException e) {
 
             log.info("Refund rejected for booking {}: {}", bookingId, e.getStatusCode());
 
-            return cancel;
+            return bookingService.cancel(bookingId);
 
-        }catch (RestClientException e) {
+        } catch (RestClientException e) {
             log.info("Payment status UNKNOWN for booking {}", bookingId, e);
-            return cancel;
+            return startCancel;
         }
-
-
-        return cancel;
     }
 }

@@ -77,9 +77,6 @@ public class BookingService {
 
         BookingEntity bookingEntity = getBookingEntity(bookingRepository.findById(id), id);
 
-        if(!currentUser.getCurrentUserId().equals(bookingEntity.getUserId()))
-            throw new AccessDeniedException("Cannot read another user's booking");
-
         return mapper.toResponse(bookingEntity);
     }
 
@@ -90,19 +87,31 @@ public class BookingService {
         return list.map(mapper::toResponse);
     }
 
+
+
     @Transactional
-    public BookingResponse cancel(Long id) {
+    public BookingResponse startCancel(Long id) {
         BookingEntity bookingEntity = getBookingEntity(bookingRepository.findById(id), id);
 
-        if(!currentUser.getCurrentUserId().equals(bookingEntity.getUserId()))
-            throw new AccessDeniedException("Cannot cancel another user's booking");
-
         if (bookingEntity.getStatus() != BookingStatus.CONFIRMED)
-            throw new ConflictException("You can't cancel booking with status %s".formatted(bookingEntity.getStatus()));
+            throw new ConflictException("You can't start cancel booking with status %s".formatted(bookingEntity.getStatus()));
 
-        bookingEntity.setStatus(BookingStatus.CANCELLED);
+        bookingEntity.setStatus(BookingStatus.CANCEL_PENDING);
 
         return mapper.toResponse(bookingEntity);
+    }
+
+    @Transactional
+    public BookingResponse cancel(Long id) {
+        BookingEntity booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Booking with id = '%s' not found".formatted(id)));
+
+        if (booking.getStatus() != BookingStatus.CANCEL_PENDING)
+            throw new ConflictException("You can't cancel booking with status %s".formatted(booking.getStatus()));
+
+        booking.setStatus(BookingStatus.CANCELLED);
+
+        return mapper.toResponse(booking);
     }
 
     @Transactional
@@ -116,7 +125,7 @@ public class BookingService {
             BookingCreatedEvent bookingEvent = BookingCreatedEvent.builder()
                     .bookingId(booking.getId())
                     .roomId(booking.getRoom().getId())
-                    .userId(currentUser.getCurrentUserId())
+                    .userId(booking.getUserId())
                     .startTime(booking.getStartTime())
                     .endTime(booking.getEndTime())
                     .createdAt(booking.getCreatedAt())

@@ -24,7 +24,7 @@ public class DenylistFilter implements GlobalFilter, Ordered {
                 .cast(JwtAuthenticationToken.class)
                 .flatMap(auth ->
                         redisTemplate.hasKey(RedisKeys.DENYLIST_PREFIX + auth.getToken().getId()))
-                .defaultIfEmpty(false)                                   // ← СНАРУЖИ: нет principal → false
+                .defaultIfEmpty(false)
                 .flatMap(revoked -> revoked ?
                         reject(exchange) :
                         chain.filter(exchange));
